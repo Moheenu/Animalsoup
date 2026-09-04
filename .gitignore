@@ -1,0 +1,57 @@
+# Add content to .gitignore
+@"
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.venv
+
+# Django
+*.log
+*.pot
+*.pyc
+*.sqlite3
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+media/
+staticfiles/
+static/
+
+# Environment variables
+.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# Test
+.coverage
+htmlcov/
+.tox/
+.pytest_cache/
+
+# MySQL
+*.sql
+*.sql.gz
+
+# Node (if any)
+node_modules/
+npm-debug.log
+
+# Other
+*.bak
+*.tmp
+*.temp
+"@ | Out-File -FilePath ".gitignore" -Encoding UTF8
