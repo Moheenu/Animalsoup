@@ -1,0 +1,27 @@
+﻿{% extends 'base/base.html' %}
+
+{% block title %}Edit {{ pet.name }} - PawCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header bg-warning">
+                    <h4 class="mb-0"><i class="fas fa-edit"></i> Edit {{ pet.name }}</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <button type="submit" class="btn btn-success w-100">Update Pet</button>
+                    </form>
+                    <div class="text-center mt-3">
+                        <a href="{% url 'pets:detail' pet.pk %}">Back to Pet</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+﻿{% extends 'base/base.html' %}
+
+{% block title %}{{ pet.name }} - PawCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-4">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <h3>{{ pet.name }}</h3>
+                    <p class="text-muted">{{ pet.get_species_display }}</p>
+                    <p><span class="badge bg-success">{{ pet.pet_id }}</span></p>
+                    <div class="mt-3">
+                        <a href="{% url 'pets:edit' pet.pk %}" class="btn btn-outline-primary btn-sm">Edit</a>
+                        <a href="{% url 'pets:delete' pet.pk %}" class="btn btn-outline-danger btn-sm">Archive</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="card shadow-sm mb-3">
+                <div class="card-header bg-success text-white">
+                    <h5 class="mb-0">Pet Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Name:</strong> {{ pet.name }}</p>
+                    <p><strong>Species:</strong> {{ pet.get_species_display }}</p>
+                    <p><strong>Breed:</strong> {{ pet.breed|default:"Unknown" }}</p>
+                    <p><strong>Gender:</strong> {{ pet.get_gender_display }}</p>
+                    <p><strong>Age:</strong> {{ pet.age_display }}</p>
+                    <p><strong>Weight:</strong> {{ pet.weight|default:"Unknown" }} kg</p>
+                </div>
+            </div>
+            
+            <div class="card shadow-sm">
+                <div class="card-header bg-info text-white">
+                    <h5 class="mb-0">Medical Information</h5>
+                </div>
+                <div class="card-body">
+                    <p><strong>Allergies:</strong> {{ pet.allergies|default:"None" }}</p>
+                    <p><strong>Conditions:</strong> {{ pet.medical_conditions|default:"None" }}</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

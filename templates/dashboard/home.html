@@ -1,0 +1,220 @@
+﻿{% extends 'base/base.html' %}
+{% load static %}
+
+{% block title %}Dashboard - PawCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Welcome Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="bg-success text-white p-4 rounded-3">
+                <h1 class="display-4">
+                    <i class="fas fa-paw"></i> Welcome, {{ user.full_name }}!
+                </h1>
+                <p class="lead">Manage your pets, appointments, and health records all in one place.</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Stats -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-paw fa-2x text-success"></i>
+                    <h3>{{ stats.total_pets }}</h3>
+                    <p class="text-muted">Total Pets</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-syringe fa-2x text-warning"></i>
+                    <h3>{{ stats.upcoming_vaccinations }}</h3>
+                    <p class="text-muted">Upcoming Vaccinations</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-calendar-check fa-2x text-info"></i>
+                    <h3>{{ stats.pending_appointments }}</h3>
+                    <p class="text-muted">Pending Appointments</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <i class="fas fa-bell fa-2x text-danger"></i>
+                    <h3>{{ stats.active_reminders }}</h3>
+                    <p class="text-muted">Active Reminders</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Actions -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="card shadow-sm">
+                <div class="card-header bg-light">
+                    <h5 class="mb-0"><i class="fas fa-bolt text-success"></i> Quick Actions</h5>
+                </div>
+                <div class="card-body">
+                    <div class="row g-2">
+                        <div class="col-md-3 col-6">
+                            <a href="{% url 'pets:add' %}" class="btn btn-outline-success w-100 py-3">
+                                <i class="fas fa-plus-circle fa-2x d-block"></i>
+                                <small>Add Pet</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="{% url 'pets:list' %}" class="btn btn-outline-primary w-100 py-3">
+                                <i class="fas fa-paw fa-2x d-block"></i>
+                                <small>My Pets</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="#" class="btn btn-outline-warning w-100 py-3">
+                                <i class="fas fa-calendar-plus fa-2x d-block"></i>
+                                <small>Book Appointment</small>
+                            </a>
+                        </div>
+                        <div class="col-md-3 col-6">
+                            <a href="#" class="btn btn-outline-danger w-100 py-3 emergency-btn">
+                                <i class="fas fa-exclamation-triangle fa-2x d-block"></i>
+                                <small>Emergency</small>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Pets Section -->
+    <div class="row mb-4">
+        <div class="col-12">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <h4><i class="fas fa-paw text-success"></i> My Pets</h4>
+                <a href="{% url 'pets:list' %}" class="btn btn-sm btn-outline-success">View All</a>
+            </div>
+            {% if pets %}
+                <div class="row">
+                    {% for pet in pets|slice:":4" %}
+                        <div class="col-md-3 col-6 mb-3">
+                            <div class="card shadow-sm card-hover">
+                                {% if pet.photo %}
+                                    <img src="{{ pet.photo.url }}" class="card-img-top" alt="{{ pet.name }}" style="height: 150px; object-fit: cover;">
+                                {% else %}
+                                    <div class="bg-light text-center py-4">
+                                        <i class="fas fa-dog fa-3x text-secondary"></i>
+                                    </div>
+                                {% endif %}
+                                <div class="card-body text-center">
+                                    <h6 class="card-title">{{ pet.name }}</h6>
+                                    <small class="text-muted">{{ pet.get_species_display }}</small>
+                                    <br>
+                                    <small class="text-muted">{{ pet.age_display }}</small>
+                                    <br>
+                                    <a href="{% url 'pets:detail' pet.pk %}" class="btn btn-success btn-sm mt-2">
+                                        <i class="fas fa-eye"></i> View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+                {% if pets|length > 4 %}
+                    <div class="text-center">
+                        <a href="{% url 'pets:list' %}" class="btn btn-outline-success">View All {{ stats.total_pets }} Pets</a>
+                    </div>
+                {% endif %}
+            {% else %}
+                <div class="text-center py-4 bg-light rounded-3">
+                    <i class="fas fa-paw fa-3x text-muted mb-3"></i>
+                    <p>You don't have any pets yet.</p>
+                    <a href="{% url 'pets:add' %}" class="btn btn-success">
+                        <i class="fas fa-plus"></i> Add Your First Pet
+                    </a>
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <!-- Recent Health Records -->
+    {% if recent_records %}
+        <div class="row mb-4">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-light">
+                        <h5 class="mb-0"><i class="fas fa-notes-medical text-info"></i> Recent Health Records</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="list-group">
+                            {% for record in recent_records %}
+                                <div class="list-group-item">
+                                    <div class="d-flex justify-content-between">
+                                        <div>
+                                            <strong>{{ record.pet.name }}</strong>
+                                            <span class="badge bg-info ms-2">{{ record.condition }}</span>
+                                        </div>
+                                        <small class="text-muted">{{ record.date_visited|date:"M d, Y" }}</small>
+                                    </div>
+                                    <p class="mb-1 small">{{ record.treatment|truncatechars:100 }}</p>
+                                    <small class="text-muted">
+                                        <i class="fas fa-user-md"></i> Dr. {{ record.doctor_name|default:"Unknown" }}
+                                    </small>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Quick Links -->
+    <div class="row">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-md fa-3x text-primary mb-3"></i>
+                    <h5>Find a Veterinarian</h5>
+                    <p class="text-muted small">Search for nearby veterinary clinics</p>
+                    <a href="#" class="btn btn-outline-primary">Find Vets</a>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-body text-center">
+                    <i class="fas fa-robot fa-3x text-success mb-3"></i>
+                    <h5>Pet Care Assistant</h5>
+                    <p class="text-muted small">Get answers to your pet care questions</p>
+                    <a href="#" class="btn btn-outline-success">Chat Now</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+.card-hover:hover {
+    transform: translateY(-5px);
+    transition: transform 0.3s;
+}
+.emergency-btn:hover {
+    animation: pulse 0.5s ease-in-out;
+}
+@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.05); }
+    100% { transform: scale(1); }
+}
+</style>
+{% endblock %}
