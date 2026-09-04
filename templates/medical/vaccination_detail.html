@@ -1,0 +1,90 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ vaccination.vaccine_name }} - PawCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <div class="card shadow">
+                <div class="card-header bg-success text-white d-flex justify-content-between align-items-center">
+                    <h4 class="mb-0">
+                        <i class="fas fa-syringe"></i> {{ vaccination.vaccine_name }}
+                    </h4>
+                    <span class="badge bg-{{ vaccination.status_color }} fs-6">
+                        {{ vaccination.status_icon }} {{ vaccination.get_status_display }}
+                    </span>
+                </div>
+                <div class="card-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Pet:</strong> 
+                                <a href="{% url 'pets:detail' vaccination.pet.pk %}">
+                                    {{ vaccination.pet.name }}
+                                </a>
+                            </p>
+                            <p><strong>Vaccine Type:</strong> {{ vaccination.get_vaccine_type_display }}</p>
+                            <p><strong>Date Administered:</strong> {{ vaccination.date_administered|date:"M d, Y" }}</p>
+                            <p><strong>Next Due Date:</strong> 
+                                {% if vaccination.next_due_date %}
+                                    {{ vaccination.next_due_date|date:"M d, Y" }}
+                                    {% if vaccination.days_until_due %}
+                                        <span class="text-muted">({{ vaccination.days_until_due }} days remaining)</span>
+                                    {% endif %}
+                                {% else %}
+                                    N/A
+                                {% endif %}
+                            </p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Veterinarian:</strong> {{ vaccination.veterinarian|default:"N/A" }}</p>
+                            <p><strong>Clinic:</strong> {{ vaccination.clinic_name|default:"N/A" }}</p>
+                            <p><strong>Batch Number:</strong> {{ vaccination.batch_number|default:"N/A" }}</p>
+                            <p><strong>Expiry Date:</strong> {{ vaccination.expiry_date|default:"N/A" }}</p>
+                        </div>
+                    </div>
+                    
+                    {% if vaccination.notes %}
+                        <div class="mt-3">
+                            <h6>Notes:</h6>
+                            <p class="text-muted">{{ vaccination.notes }}</p>
+                        </div>
+                    {% endif %}
+                    
+                    <!-- Certificate Section with Back Button -->
+                    <!-- Certificate Section with Back Button -->
+{% if vaccination.certificate %}
+    <div class="mt-3 p-3 bg-light rounded-3">
+        <h6><i class="fas fa-file-pdf text-danger"></i> Certificate/Document</h6>
+        <div class="d-flex flex-wrap gap-2 mt-2">
+            <a href="{{ vaccination.certificate.url }}" class="btn btn-outline-danger">
+                <i class="fas fa-file-pdf"></i> View Certificate
+            </a>
+            <a href="{{ vaccination.certificate.url }}" download class="btn btn-outline-success">
+                <i class="fas fa-download"></i> Download
+                    </a>
+                    <a href="{% url 'medical:vaccination_list' %}" class="btn btn-outline-secondary">
+                        <i class="fas fa-arrow-left"></i> Back to Vaccinations
+                    </a>
+                </div>
+            </div>
+        {% endif %}
+                    
+                    <!-- Action Buttons -->
+                    <div class="mt-4 d-flex flex-wrap gap-2">
+                        <a href="{% url 'medical:vaccination_edit' vaccination.pk %}" class="btn btn-warning">
+                            <i class="fas fa-edit"></i> Edit
+                        </a>
+                        <a href="{% url 'medical:vaccination_delete' vaccination.pk %}" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> Archive
+                        </a>
+                        <a href="{% url 'medical:vaccination_list' %}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Back to List
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

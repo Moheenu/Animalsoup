@@ -1,0 +1,233 @@
+{% extends 'base/base.html' %}
+
+{% block title %}Reminders - PawCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <!-- Header -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>
+            <i class="fas fa-bell text-success"></i> Reminders
+        </h1>
+        <a href="{% url 'reminders:add' %}" class="btn btn-success">
+            <i class="fas fa-plus"></i> Add Reminder
+        </a>
+    </div>
+
+    <!-- Statistics -->
+    <div class="row mb-4">
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm">
+                <div class="card-body">
+                    <h5 class="text-muted">Total</h5>
+                    <h3>{{ stats.total }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm border-warning">
+                <div class="card-body">
+                    <h5 class="text-warning">⏰ Pending</h5>
+                    <h3>{{ stats.pending }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm border-success">
+                <div class="card-body">
+                    <h5 class="text-success">✅ Completed</h5>
+                    <h3>{{ stats.completed }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-3 col-6">
+            <div class="card text-center shadow-sm border-danger">
+                <div class="card-body">
+                    <h5 class="text-danger">⚠️ Overdue</h5>
+                    <h3>{{ stats.overdue }}</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Upcoming Reminders -->
+    {% if upcoming_reminders %}
+        <div class="card shadow-sm mb-4 border-warning">
+            <div class="card-header bg-warning">
+                <h5 class="mb-0"><i class="fas fa-clock"></i> Upcoming Reminders (Next 7 Days)</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    {% for reminder in upcoming_reminders %}
+                        <div class="col-md-4 mb-2">
+                            <div class="d-flex align-items-center">
+                                <span class="fs-3 me-2">{{ reminder.reminder_type_icon }}</span>
+                                <div>
+                                    <strong>{{ reminder.title }}</strong>
+                                    <br>
+                                    <small class="text-muted">
+                                        {{ reminder.reminder_date|date:"M d, Y" }}
+                                        {% if reminder.pet %}
+                                            - {{ reminder.pet.name }}
+                                        {% endif %}
+                                    </small>
+                                    <br>
+                                    <a href="{% url 'reminders:detail' reminder.pk %}" class="btn btn-sm btn-outline-primary mt-1">
+                                        View
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
+    <!-- Filters -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-body">
+            <form method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="search" class="form-control" placeholder="Search reminders..." value="{{ search_query }}">
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="pending" {% if status_filter == 'pending' %}selected{% endif %}>⏰ Pending</option>
+                        <option value="completed" {% if status_filter == 'completed' %}selected{% endif %}>✅ Completed</option>
+                        <option value="overdue" {% if status_filter == 'overdue' %}selected{% endif %}>⚠️ Overdue</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <select name="type" class="form-select">
+                        <option value="">All Types</option>
+                        <option value="VACCINATION" {% if type_filter == 'VACCINATION' %}selected{% endif %}>💉 Vaccination</option>
+                        <option value="DEWORMING" {% if type_filter == 'DEWORMING' %}selected{% endif %}>🐛 Deworming</option>
+                        <option value="MEDICATION" {% if type_filter == 'MEDICATION' %}selected{% endif %}>💊 Medication</option>
+                        <option value="VET_APPOINTMENT" {% if type_filter == 'VET_APPOINTMENT' %}selected{% endif %}>🏥 Vet Appointment</option>
+                        <option value="GROOMING" {% if type_filter == 'GROOMING' %}selected{% endif %}>✂️ Grooming</option>
+                        <option value="DENTAL" {% if type_filter == 'DENTAL' %}selected{% endif %}>🦷 Dental</option>
+                        <option value="LICENSE" {% if type_filter == 'LICENSE' %}selected{% endif %}>📋 License</option>
+                        <option value="FLEA_TICK" {% if type_filter == 'FLEA_TICK' %}selected{% endif %}>🪳 Flea/Tick</option>
+                        <option value="FEEDING" {% if type_filter == 'FEEDING' %}selected{% endif %}>🍖 Feeding</option>
+                        <option value="HEALTH_CHECKUP" {% if type_filter == 'HEALTH_CHECKUP' %}selected{% endif %}>🩺 Health Checkup</option>
+                        <option value="CUSTOM" {% if type_filter == 'CUSTOM' %}selected{% endif %}>📌 Custom</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Filter
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Reminders List -->
+    {% if reminders %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>Type</th>
+                        <th>Title</th>
+                        <th>Pet</th>
+                        <th>Date</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for reminder in reminders %}
+                        <tr>
+                            <td>
+                                <span class="fs-4">{{ reminder.reminder_type_icon }}</span>
+                            </td>
+                            <td>
+                                <strong>{{ reminder.title }}</strong>
+                                {% if reminder.description %}
+                                    <br>
+                                    <small class="text-muted">{{ reminder.description|truncatechars:50 }}</small>
+                                {% endif %}
+                            </td>
+                            <td>{{ reminder.pet.name|default:"General" }}</td>
+                            <td>
+                                {{ reminder.reminder_date|date:"M d, Y" }}
+                                {% if reminder.reminder_time %}
+                                    <br>
+                                    <small class="text-muted">{{ reminder.reminder_time|time:"H:i" }}</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ reminder.priority_color }}">
+                                    {{ reminder.get_priority_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <span class="badge bg-{{ reminder.status_color }}">
+                                    {{ reminder.status_icon }} {{ reminder.get_status_display }}
+                                </span>
+                            </td>
+                            <td>
+                                <div class="btn-group btn-group-sm">
+                                    <a href="{% url 'reminders:detail' reminder.pk %}" class="btn btn-outline-primary">
+                                        <i class="fas fa-eye"></i>
+                                    </a>
+                                    <a href="{% url 'reminders:edit' reminder.pk %}" class="btn btn-outline-warning">
+                                        <i class="fas fa-edit"></i>
+                                    </a>
+                                    {% if reminder.status != 'COMPLETED' %}
+                                        <a href="{% url 'reminders:complete' reminder.pk %}" class="btn btn-outline-success">
+                                            <i class="fas fa-check"></i>
+                                        </a>
+                                    {% endif %}
+                                    <a href="{% url 'reminders:delete' reminder.pk %}" class="btn btn-outline-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Pagination -->
+        {% if reminders.has_other_pages %}
+            <nav>
+                <ul class="pagination justify-content-center">
+                    {% if reminders.has_previous %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ reminders.previous_page_number }}">Previous</a>
+                        </li>
+                    {% endif %}
+                    
+                    {% for num in reminders.paginator.page_range %}
+                        <li class="page-item {% if reminders.number == num %}active{% endif %}">
+                            <a class="page-link" href="?page={{ num }}">{{ num }}</a>
+                        </li>
+                    {% endfor %}
+                    
+                    {% if reminders.has_next %}
+                        <li class="page-item">
+                            <a class="page-link" href="?page={{ reminders.next_page_number }}">Next</a>
+                        </li>
+                    {% endif %}
+                </ul>
+            </nav>
+        {% endif %}
+        
+    {% else %}
+        <div class="text-center py-5">
+            <i class="fas fa-bell fa-5x text-muted mb-3"></i>
+            <h3>No Reminders</h3>
+            <p class="text-muted">Create your first reminder to stay organized!</p>
+            <a href="{% url 'reminders:add' %}" class="btn btn-success">
+                <i class="fas fa-plus"></i> Add Reminder
+            </a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

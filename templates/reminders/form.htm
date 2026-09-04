@@ -1,0 +1,102 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} - PawCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header {% if reminder %}bg-warning{% else %}bg-success{% endif %} text-white">
+                    <h4 class="mb-0">
+                        <i class="fas {% if reminder %}fa-edit{% else %}fa-plus-circle{% endif %}"></i>
+                        {{ title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Title *</label>
+                                {{ form.title }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Reminder Type *</label>
+                                {{ form.reminder_type }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            {{ form.description }}
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Pet (Optional)</label>
+                                {{ form.pet }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Priority</label>
+                                {{ form.priority }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Reminder Date *</label>
+                                {{ form.reminder_date }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Reminder Time (Optional)</label>
+                                {{ form.reminder_time }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Repeat Every (Days, 0 = No Repeat)</label>
+                            {{ form.repeat_interval }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            {{ form.notes }}
+                        </div>
+                        
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    {{ form.notify_by_email }}
+                                    <label class="form-check-label" for="{{ form.notify_by_email.id_for_label }}">
+                                        <i class="fas fa-envelope"></i> Notify by Email
+                                    </label>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-check">
+                                    {{ form.notify_by_sms }}
+                                    <label class="form-check-label" for="{{ form.notify_by_sms.id_for_label }}">
+                                        <i class="fas fa-sms"></i> Notify by SMS
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-save"></i> Save Reminder
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'reminders:list' %}" class="text-muted">
+                            <i class="fas fa-arrow-left"></i> Back to Reminders
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

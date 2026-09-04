@@ -1,0 +1,101 @@
+{% extends 'base/base.html' %}
+
+{% block title %}{{ title }} - PawCare{% endblock %}
+
+{% block content %}
+<div class="container py-4">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card shadow">
+                <div class="card-header {% if vaccination %}bg-warning{% else %}bg-success{% endif %} text-white">
+                    <h4 class="mb-0">
+                        <i class="fas {% if vaccination %}fa-edit{% else %}fa-plus-circle{% endif %}"></i>
+                        {{ title }}
+                    </h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Pet *</label>
+                                {{ form.pet }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Vaccine Name *</label>
+                                {{ form.vaccine_name }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Vaccine Type</label>
+                                {{ form.vaccine_type }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Date Administered *</label>
+                                {{ form.date_administered }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Next Due Date</label>
+                                {{ form.next_due_date }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Expiry Date</label>
+                                {{ form.expiry_date }}
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Veterinarian</label>
+                                {{ form.veterinarian }}
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Clinic Name</label>
+                                {{ form.clinic_name }}
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Batch/Lot Number</label>
+                            {{ form.batch_number }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Notes</label>
+                            {{ form.notes }}
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label">Certificate/Document</label>
+                            {{ form.certificate }}
+                            {% if vaccination.certificate %}
+                                <div class="mt-2">
+                                    <a href="{{ vaccination.certificate.url }}" target="_blank" class="btn btn-sm btn-outline-info">
+                                        <i class="fas fa-file-pdf"></i> View Current Certificate
+                                    </a>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="fas fa-save"></i> Save Vaccination Record
+                        </button>
+                    </form>
+                    
+                    <div class="text-center mt-3">
+                        <a href="{% url 'medical:vaccination_list' %}" class="text-muted">
+                            <i class="fas fa-arrow-left"></i> Back to Vaccinations
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
